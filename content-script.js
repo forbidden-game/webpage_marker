@@ -47,7 +47,7 @@ function createHighlightWithColor(selection, color) {
       parentElement = parentElement.parentElement;
     }
     
-    // If already highlighted, remove the highlight instead
+    // If selection is inside an existing highlight, remove the highlight instead
     const existingHighlight = parentElement.closest('.webpage-marker-highlight');
     if (existingHighlight) {
       removeHighlight(existingHighlight);
@@ -70,13 +70,6 @@ function createHighlightWithColor(selection, color) {
     highlightSpan.dataset.highlightId = `highlight-${highlightIdCounter++}`;
     highlightSpan.dataset.timestamp = new Date().toISOString();
     highlightSpan.dataset.color = color;
-    highlightSpan.title = 'Click to remove highlight';
-    
-    // Add click handler to remove highlight
-    highlightSpan.addEventListener('click', function(e) {
-      e.stopPropagation();
-      removeHighlight(this);
-    });
     
     // Wrap the selected content
     try {
@@ -195,15 +188,9 @@ function loadHighlights() {
 document.addEventListener('DOMContentLoaded', () => {
   loadHighlights();
   
-  // Add click listeners to existing highlights when page loads
+  // Initialize existing highlights when page loads
   setTimeout(() => {
     document.querySelectorAll('.webpage-marker-highlight').forEach(element => {
-      element.title = 'Click to remove highlight';
-      element.addEventListener('click', function(e) {
-        e.stopPropagation();
-        removeHighlight(this);
-      });
-      
       // Backward compatibility: add yellow class to highlights without color
       if (!element.dataset.color && !element.classList.contains('green') && 
           !element.classList.contains('pink') && !element.classList.contains('blue') &&
