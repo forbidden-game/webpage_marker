@@ -42,9 +42,19 @@
   background-color: transparent !important;
 }
 
-/* Different highlight colors (for future use) */
+/* Different highlight colors */
+.webpage-marker-highlight.yellow {
+  background-color: #ffeb3b;
+  box-shadow: 2px 0 0 #ffeb3b, -2px 0 0 #ffeb3b;
+}
+
+.webpage-marker-highlight.yellow:hover {
+  background-color: #fdd835;
+}
+
 .webpage-marker-highlight.green {
   background-color: #81c784;
+  box-shadow: 2px 0 0 #81c784, -2px 0 0 #81c784;
 }
 
 .webpage-marker-highlight.green:hover {
@@ -53,6 +63,7 @@
 
 .webpage-marker-highlight.pink {
   background-color: #f48fb1;
+  box-shadow: 2px 0 0 #f48fb1, -2px 0 0 #f48fb1;
 }
 
 .webpage-marker-highlight.pink:hover {
@@ -61,10 +72,29 @@
 
 .webpage-marker-highlight.blue {
   background-color: #64b5f6;
+  box-shadow: 2px 0 0 #64b5f6, -2px 0 0 #64b5f6;
 }
 
 .webpage-marker-highlight.blue:hover {
   background-color: #42a5f5;
+}
+
+.webpage-marker-highlight.orange {
+  background-color: #ffb74d;
+  box-shadow: 2px 0 0 #ffb74d, -2px 0 0 #ffb74d;
+}
+
+.webpage-marker-highlight.orange:hover {
+  background-color: #ffa726;
+}
+
+.webpage-marker-highlight.purple {
+  background-color: #ba68c8;
+  box-shadow: 2px 0 0 #ba68c8, -2px 0 0 #ba68c8;
+}
+
+.webpage-marker-highlight.purple:hover {
+  background-color: #ab47bc;
 }
 
 /* Print styles to ensure highlights appear in PDFs */
@@ -78,6 +108,10 @@
     box-shadow: 2px 0 0 #ffeb3b, -2px 0 0 #ffeb3b !important;
   }
   
+  .webpage-marker-highlight.yellow {
+    background-color: #ffeb3b !important;
+  }
+  
   .webpage-marker-highlight.green {
     background-color: #81c784 !important;
   }
@@ -88,6 +122,14 @@
   
   .webpage-marker-highlight.blue {
     background-color: #64b5f6 !important;
+  }
+  
+  .webpage-marker-highlight.orange {
+    background-color: #ffb74d !important;
+  }
+  
+  .webpage-marker-highlight.purple {
+    background-color: #ba68c8 !important;
   }
   
   /* Don't print hidden highlights */

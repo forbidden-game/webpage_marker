@@ -28,6 +28,15 @@ function highlightSelectedText() {
     return;
   }
   
+  // Get selected color from storage
+  chrome.storage.local.get(['selectedHighlightColor'], (result) => {
+    const selectedColor = result.selectedHighlightColor || 'yellow';
+    createHighlightWithColor(selection, selectedColor);
+  });
+}
+
+// Function to create highlight with specified color
+function createHighlightWithColor(selection, color) {
   try {
     const range = selection.getRangeAt(0);
     const selectedText = selection.toString();
@@ -57,9 +66,10 @@ function highlightSelectedText() {
     
     // Create highlight wrapper
     const highlightSpan = document.createElement('span');
-    highlightSpan.className = 'webpage-marker-highlight';
+    highlightSpan.className = `webpage-marker-highlight ${color}`;
     highlightSpan.dataset.highlightId = `highlight-${highlightIdCounter++}`;
     highlightSpan.dataset.timestamp = new Date().toISOString();
+    highlightSpan.dataset.color = color;
     highlightSpan.title = 'Click to remove highlight';
     
     // Add click handler to remove highlight
@@ -84,6 +94,7 @@ function highlightSelectedText() {
       id: highlightSpan.dataset.highlightId,
       text: selectedText,
       timestamp: highlightSpan.dataset.timestamp,
+      color: color,
       url: window.location.href
     });
     
@@ -160,6 +171,21 @@ function loadHighlights() {
   chrome.storage.local.get([pageKey], (result) => {
     if (result[pageKey]) {
       highlights = result[pageKey];
+      
+      // Migrate old highlights that don't have color property
+      let needsUpdate = false;
+      highlights.forEach(highlight => {
+        if (!highlight.color) {
+          highlight.color = 'yellow'; // Default to yellow for backward compatibility
+          needsUpdate = true;
+        }
+      });
+      
+      // Save updated highlights if migration was needed
+      if (needsUpdate) {
+        saveHighlights();
+      }
+      
       // TODO: Restore highlights on page (complex due to DOM changes)
     }
   });
@@ -177,6 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
         removeHighlight(this);
       });
+      
+      // Backward compatibility: add yellow class to highlights without color
+      if (!element.dataset.color && !element.classList.contains('green') && 
+          !element.classList.contains('pink') && !element.classList.contains('blue') &&
+          !element.classList.contains('orange') && !element.classList.contains('purple')) {
+        element.classList.add('yellow');
+        element.dataset.color = 'yellow';
+      }
     });
   }, 100);
 });

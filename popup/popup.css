@@ -126,3 +126,53 @@ kbd {
   color: #1976D2;
   text-decoration: none;
 }
+
+/* Color Picker Styles */
+.color-picker {
+  margin-bottom: 16px;
+}
+
+.color-picker h3 {
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.color-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-btn {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  position: relative;
+}
+
+.color-btn:hover {
+  transform: scale(1.1);
+  border-color: #999;
+}
+
+.color-btn.active {
+  border-color: #333;
+  border-width: 3px;
+}
+
+.color-btn.active::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #333;
+  font-weight: bold;
+  font-size: 14px;
+  text-shadow: 0 0 2px rgba(255,255,255,0.8);
+}

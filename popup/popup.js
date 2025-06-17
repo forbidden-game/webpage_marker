@@ -14,9 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveBtn = document.getElementById('saveHighlights');
   const customizeBtn = document.getElementById('customizeHotkeys');
   const highlightCount = document.getElementById('highlightCount');
+  const colorButtons = document.querySelectorAll('.color-btn');
   
   // Update highlight count
   updateHighlightCount();
+  
+  // Load and set selected color
+  loadSelectedColor();
   
   // Toggle highlights
   toggleBtn.addEventListener('click', () => {
@@ -62,6 +66,19 @@ document.addEventListener('DOMContentLoaded', () => {
     window.close();
   });
   
+  // Color selection
+  colorButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Remove active class from all buttons
+      colorButtons.forEach(b => b.classList.remove('active'));
+      // Add active class to clicked button
+      btn.classList.add('active');
+      // Save selected color
+      const selectedColor = btn.dataset.color;
+      chrome.storage.local.set({ 'selectedHighlightColor': selectedColor });
+    });
+  });
+  
   // Update highlight count
   function updateHighlightCount() {
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
@@ -71,6 +88,20 @@ document.addEventListener('DOMContentLoaded', () => {
           const highlights = result[pageKey] || [];
           highlightCount.textContent = `Highlights on this page: ${highlights.length}`;
         });
+      }
+    });
+  }
+  
+  // Load selected color
+  function loadSelectedColor() {
+    chrome.storage.local.get(['selectedHighlightColor'], (result) => {
+      const selectedColor = result.selectedHighlightColor || 'yellow';
+      // Remove active class from all buttons
+      colorButtons.forEach(btn => btn.classList.remove('active'));
+      // Add active class to selected color button
+      const activeBtn = document.querySelector(`[data-color="${selectedColor}"]`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
       }
     });
   }
