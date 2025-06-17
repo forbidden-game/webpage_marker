@@ -1,0 +1,75 @@
+/* Webpage Marker Highlight Styles */
+
+/* Default highlight style - yellow marker effect */
+.webpage-marker-highlight {
+  background-color: #ffeb3b;
+  padding: 0 2px;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  display: inline;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect for highlights */
+.webpage-marker-highlight:hover {
+  background-color: #fdd835;
+  cursor: pointer;
+}
+
+/* Hidden state for toggle functionality */
+.webpage-marker-highlight.webpage-marker-hidden {
+  background-color: transparent !important;
+}
+
+/* Different highlight colors (for future use) */
+.webpage-marker-highlight.green {
+  background-color: #81c784;
+}
+
+.webpage-marker-highlight.green:hover {
+  background-color: #66bb6a;
+}
+
+.webpage-marker-highlight.pink {
+  background-color: #f48fb1;
+}
+
+.webpage-marker-highlight.pink:hover {
+  background-color: #f06292;
+}
+
+.webpage-marker-highlight.blue {
+  background-color: #64b5f6;
+}
+
+.webpage-marker-highlight.blue:hover {
+  background-color: #42a5f5;
+}
+
+/* Print styles to ensure highlights appear in PDFs */
+@media print {
+  .webpage-marker-highlight {
+    background-color: #ffeb3b !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+  }
+  
+  .webpage-marker-highlight.green {
+    background-color: #81c784 !important;
+  }
+  
+  .webpage-marker-highlight.pink {
+    background-color: #f48fb1 !important;
+  }
+  
+  .webpage-marker-highlight.blue {
+    background-color: #64b5f6 !important;
+  }
+  
+  /* Don't print hidden highlights */
+  .webpage-marker-highlight.webpage-marker-hidden {
+    background-color: transparent !important;
+  }
+}
