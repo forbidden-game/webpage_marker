@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Get buttons
   const toggleBtn = document.getElementById('toggleHighlights');
   const clearBtn = document.getElementById('clearHighlights');
-  const exportBtn = document.getElementById('exportPdf');
+  const saveBtn = document.getElementById('saveHighlights');
   const highlightCount = document.getElementById('highlightCount');
   
   // Update highlight count
@@ -38,9 +38,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   
-  // Export PDF (placeholder for now)
-  exportBtn.addEventListener('click', () => {
-    alert('PDF export feature coming soon!');
+  // Save with Highlights
+  saveBtn.addEventListener('click', () => {
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      if (tabs[0]) {
+        chrome.tabs.sendMessage(tabs[0].id, {action: 'saveWithHighlights'}, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error('Error:', chrome.runtime.lastError);
+            alert('Failed to prepare page for saving. Please try again.');
+          } else {
+            // Close popup after triggering save
+            window.close();
+          }
+        });
+      }
+    });
   });
   
   // Update highlight count
