@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Markdown Layout Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+        .highlight { background-color: yellow; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        pre { background-color: #f5f5f5; padding: 10px; border-radius: 4px; }
+        code { background-color: #f5f5f5; padding: 2px 4px; border-radius: 2px; }
+        blockquote { border-left: 4px solid #ddd; margin: 0; padding-left: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Markdown Layout Test Page</h1>
+    
+    <h2>Regular Paragraphs</h2>
+    <p>This is a regular paragraph with some text that should be safe to highlight. Let's make this longer so we can test selections that span multiple lines and see how the new text node wrapping works.</p>
+    
+    <h2>Lists</h2>
+    <ul>
+        <li>First item with some text to highlight</li>
+        <li>Second item with <strong>bold text</strong> and <em>italic text</em></li>
+        <li>Third item with a <a href="#">link inside</a> the text</li>
+    </ul>
+    
+    <h2>Code Blocks</h2>
+    <pre><code>function highlightText() {
+    const selection = window.getSelection();
+    // This code block should not break when text is highlighted
+    console.log('Testing code highlighting');
+}</code></pre>
+    
+    <h2>Inline Code</h2>
+    <p>Here is some text with <code>inline code snippets</code> that should work properly when highlighting around them.</p>
+    
+    <h2>Tables</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Header 1</th>
+                <th>Header 2</th>
+                <th>Header 3</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Cell data that can be highlighted</td>
+                <td>More cell data with <strong>formatting</strong></td>
+                <td>Final cell with text</td>
+            </tr>
+            <tr>
+                <td>Second row data</td>
+                <td>Middle cell</td>
+                <td>Last cell</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h2>Blockquotes</h2>
+    <blockquote>
+        <p>This is a blockquote with some text that should be highlightable without breaking the quote structure. Let's make this long enough to test multi-line selections.</p>
+    </blockquote>
+    
+    <h2>Mixed Content</h2>
+    <p>This paragraph has <strong>bold text</strong>, <em>italic text</em>, <code>inline code</code>, and <a href="#">links</a> all mixed together. Highlighting across these elements should work safely with the new text node wrapping approach.</p>
+    
+    <h3>Instructions for Testing:</h3>
+    <ol>
+        <li>Try highlighting individual words</li>
+        <li>Try highlighting across multiple elements (e.g., from bold text to regular text)</li>
+        <li>Try highlighting table cells</li>
+        <li>Try highlighting code blocks</li>
+        <li>Check that the page layout remains intact after highlighting</li>
+    </ol>
+</body>
+</html>

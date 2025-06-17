@@ -35,6 +35,78 @@ function highlightSelectedText() {
   });
 }
 
+// Function to safely wrap text nodes in a range
+function wrapTextNodesInRange(range, color, highlightId) {
+  const wrappedNodes = [];
+  
+  // Create TreeWalker to find all text nodes within the range
+  const treeWalker = document.createTreeWalker(
+    range.commonAncestorContainer,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode: function(node) {
+        // Only accept text nodes that intersect with our range
+        if (range.intersectsNode(node)) {
+          return NodeFilter.FILTER_ACCEPT;
+        }
+        return NodeFilter.FILTER_REJECT;
+      }
+    }
+  );
+  
+  // Collect all text nodes that need wrapping
+  const textNodesToWrap = [];
+  while (treeWalker.nextNode()) {
+    textNodesToWrap.push(treeWalker.currentNode);
+  }
+  
+  // Wrap each text node individually
+  for (const textNode of textNodesToWrap) {
+    const highlightRange = document.createRange();
+    
+    // Handle partial selections at start/end of range
+    const isStartNode = (textNode === range.startContainer);
+    const isEndNode = (textNode === range.endContainer);
+    
+    if (isStartNode && isEndNode) {
+      // This text node contains both start and end of selection
+      highlightRange.setStart(textNode, range.startOffset);
+      highlightRange.setEnd(textNode, range.endOffset);
+    } else if (isStartNode) {
+      // This is the starting text node
+      highlightRange.setStart(textNode, range.startOffset);
+      highlightRange.setEnd(textNode, textNode.length);
+    } else if (isEndNode) {
+      // This is the ending text node
+      highlightRange.setStart(textNode, 0);
+      highlightRange.setEnd(textNode, range.endOffset);
+    } else {
+      // This text node is fully contained within the selection
+      highlightRange.selectNode(textNode);
+    }
+    
+    // Only wrap if there's actual text content
+    const selectedText = highlightRange.toString();
+    if (selectedText.trim() !== '') {
+      try {
+        const highlightSpan = document.createElement('span');
+        highlightSpan.className = `webpage-marker-highlight ${color}`;
+        highlightSpan.dataset.highlightId = highlightId;
+        highlightSpan.dataset.timestamp = new Date().toISOString();
+        highlightSpan.dataset.color = color;
+        
+        // Safely wrap this individual text range
+        highlightRange.surroundContents(highlightSpan);
+        wrappedNodes.push(highlightSpan);
+      } catch (error) {
+        console.warn('Failed to wrap text node:', error);
+      }
+    }
+  }
+  
+  return wrappedNodes;
+}
+
 // Function to create highlight with specified color
 function createHighlightWithColor(selection, color) {
   try {
@@ -71,23 +143,22 @@ function createHighlightWithColor(selection, color) {
     highlightSpan.dataset.timestamp = new Date().toISOString();
     highlightSpan.dataset.color = color;
     
-    // Wrap the selected content
-    try {
-      range.surroundContents(highlightSpan);
-    } catch (e) {
-      // If surroundContents fails (e.g., selection spans multiple elements),
-      // extract and wrap the contents
-      const contents = range.extractContents();
-      highlightSpan.appendChild(contents);
-      range.insertNode(highlightSpan);
+    // Wrap the selected content safely using text node wrapping
+    const highlightId = highlightSpan.dataset.highlightId;
+    const wrappedNodes = wrapTextNodesInRange(range, color, highlightId);
+    
+    // If no nodes were wrapped, don't create a highlight
+    if (wrappedNodes.length === 0) {
+      return;
     }
     
     // Store highlight information
     highlights.push({
-      id: highlightSpan.dataset.highlightId,
+      id: highlightId,
       text: selectedText,
-      timestamp: highlightSpan.dataset.timestamp,
+      timestamp: new Date().toISOString(),
       color: color,
+      nodeCount: wrappedNodes.length,
       url: window.location.href
     });
     
@@ -113,18 +184,27 @@ function toggleAllHighlights() {
   });
 }
 
-// Remove a single highlight
+// Remove a single highlight (may consist of multiple spans)
 function removeHighlight(highlightElement) {
-  // Remove from highlights array
   const highlightId = highlightElement.dataset.highlightId;
+  
+  // Remove from highlights array
   highlights = highlights.filter(h => h.id !== highlightId);
   
-  // Remove the highlight span and restore original text
-  const parent = highlightElement.parentNode;
-  while (highlightElement.firstChild) {
-    parent.insertBefore(highlightElement.firstChild, highlightElement);
-  }
-  parent.removeChild(highlightElement);
+  // Find and remove all spans with the same highlight ID
+  const allSpansWithId = document.querySelectorAll(`[data-highlight-id="${highlightId}"]`);
+  allSpansWithId.forEach(span => {
+    const parent = span.parentNode;
+    // Move all child nodes before the span
+    while (span.firstChild) {
+      parent.insertBefore(span.firstChild, span);
+    }
+    // Remove the empty span
+    parent.removeChild(span);
+  });
+  
+  // Normalize text nodes to merge adjacent text nodes
+  document.normalize();
   
   // Save updated highlights
   saveHighlights();

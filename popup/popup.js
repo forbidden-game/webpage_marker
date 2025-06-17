@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load and set selected color
   loadSelectedColor();
   
+  // Load and display current hotkeys
+  loadCurrentHotkeys();
+  
   // Toggle highlights
   toggleBtn.addEventListener('click', () => {
     chrome.runtime.sendMessage({action: 'toggleHighlights'}, (response) => {
@@ -104,5 +107,59 @@ document.addEventListener('DOMContentLoaded', () => {
         activeBtn.classList.add('active');
       }
     });
+  }
+  
+  // Load and display current hotkeys
+  async function loadCurrentHotkeys() {
+    const highlightElement = document.getElementById('highlight-hotkey');
+    const unhighlightElement = document.getElementById('unhighlight-hotkey');
+    const toggleElement = document.getElementById('toggle-hotkey');
+    
+    try {
+      const commands = await chrome.commands.getAll();
+      
+      // Find the highlight command
+      const highlightCommand = commands.find(cmd => cmd.name === 'highlight-text');
+      if (highlightCommand && highlightCommand.shortcut) {
+        const formattedShortcut = formatShortcut(highlightCommand.shortcut);
+        highlightElement.textContent = formattedShortcut;
+        unhighlightElement.textContent = formattedShortcut;
+      } else {
+        highlightElement.textContent = 'Not set';
+        unhighlightElement.textContent = 'Not set';
+      }
+      
+      // Find the toggle command
+      const toggleCommand = commands.find(cmd => cmd.name === 'toggle-highlights');
+      if (toggleCommand && toggleCommand.shortcut) {
+        toggleElement.textContent = formatShortcut(toggleCommand.shortcut);
+      } else {
+        toggleElement.textContent = 'Not set';
+      }
+      
+    } catch (error) {
+      console.error('Failed to get commands:', error);
+      // Fallback to defaults
+      highlightElement.textContent = 'Cmd+H';
+      unhighlightElement.textContent = 'Cmd+H';
+      toggleElement.textContent = 'Cmd+Shift+H';
+    }
+  }
+  
+  // Format shortcut string for display
+  function formatShortcut(shortcut) {
+    if (!shortcut) return 'Not set';
+    
+    // Handle Mac vs other platforms
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    let formatted = shortcut;
+    
+    if (isMac) {
+      formatted = formatted.replace(/MacCtrl/g, 'Cmd');
+      formatted = formatted.replace(/Ctrl/g, 'Cmd');
+    }
+    
+    // Add spaces around + for readability
+    return formatted.replace(/\+/g, ' + ');
   }
 });
