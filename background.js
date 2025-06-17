@@ -28,5 +28,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
     });
     return true; // Keep message channel open for async response
+  } else if (request.action === 'updateHighlightCount') {
+    // Forward count update to popup if it's open
+    chrome.runtime.sendMessage({action: 'updateHighlightCount', count: request.count});
   }
 });

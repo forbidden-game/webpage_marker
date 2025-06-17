@@ -32,11 +32,41 @@ function highlightSelectedText() {
     const range = selection.getRangeAt(0);
     const selectedText = selection.toString();
     
+    // Check if selection is already inside a highlight
+    let parentElement = range.commonAncestorContainer;
+    if (parentElement.nodeType === Node.TEXT_NODE) {
+      parentElement = parentElement.parentElement;
+    }
+    
+    // If already highlighted, remove the highlight instead
+    const existingHighlight = parentElement.closest('.webpage-marker-highlight');
+    if (existingHighlight) {
+      removeHighlight(existingHighlight);
+      selection.removeAllRanges();
+      return;
+    }
+    
+    // Check if selection contains any highlights
+    const container = range.cloneContents();
+    const containsHighlight = container.querySelector('.webpage-marker-highlight');
+    if (containsHighlight) {
+      alert('Cannot highlight text that already contains highlights. Please select unhighlighted text.');
+      selection.removeAllRanges();
+      return;
+    }
+    
     // Create highlight wrapper
     const highlightSpan = document.createElement('span');
     highlightSpan.className = 'webpage-marker-highlight';
     highlightSpan.dataset.highlightId = `highlight-${highlightIdCounter++}`;
     highlightSpan.dataset.timestamp = new Date().toISOString();
+    highlightSpan.title = 'Click to remove highlight';
+    
+    // Add click handler to remove highlight
+    highlightSpan.addEventListener('click', function(e) {
+      e.stopPropagation();
+      removeHighlight(this);
+    });
     
     // Wrap the selected content
     try {
@@ -63,6 +93,9 @@ function highlightSelectedText() {
     // Save highlights to storage
     saveHighlights();
     
+    // Notify popup to update counter
+    chrome.runtime.sendMessage({action: 'updateHighlightCount', count: highlights.length});
+    
   } catch (error) {
     console.error('Error highlighting text:', error);
   }
@@ -74,6 +107,26 @@ function toggleAllHighlights() {
   highlightElements.forEach(element => {
     element.classList.toggle('webpage-marker-hidden');
   });
+}
+
+// Remove a single highlight
+function removeHighlight(highlightElement) {
+  // Remove from highlights array
+  const highlightId = highlightElement.dataset.highlightId;
+  highlights = highlights.filter(h => h.id !== highlightId);
+  
+  // Remove the highlight span and restore original text
+  const parent = highlightElement.parentNode;
+  while (highlightElement.firstChild) {
+    parent.insertBefore(highlightElement.firstChild, highlightElement);
+  }
+  parent.removeChild(highlightElement);
+  
+  // Save updated highlights
+  saveHighlights();
+  
+  // Notify popup to update counter
+  chrome.runtime.sendMessage({action: 'updateHighlightCount', count: highlights.length});
 }
 
 // Clear all highlights
@@ -90,6 +143,9 @@ function clearAllHighlights() {
   
   highlights = [];
   saveHighlights();
+  
+  // Notify popup to update counter
+  chrome.runtime.sendMessage({action: 'updateHighlightCount', count: 0});
 }
 
 // Save highlights to chrome storage
@@ -110,4 +166,17 @@ function loadHighlights() {
 }
 
 // Initialize when content script loads
-document.addEventListener('DOMContentLoaded', loadHighlights);
+document.addEventListener('DOMContentLoaded', () => {
+  loadHighlights();
+  
+  // Add click listeners to existing highlights when page loads
+  setTimeout(() => {
+    document.querySelectorAll('.webpage-marker-highlight').forEach(element => {
+      element.title = 'Click to remove highlight';
+      element.addEventListener('click', function(e) {
+        e.stopPropagation();
+        removeHighlight(this);
+      });
+    });
+  }, 100);
+});

@@ -15,6 +15,25 @@
 .webpage-marker-highlight:hover {
   background-color: #fdd835;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+/* Tooltip style on hover */
+.webpage-marker-highlight:hover::after {
+  content: "Click to remove";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10000;
+  pointer-events: none;
 }
 
 /* Hidden state for toggle functionality */

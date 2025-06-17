@@ -1,5 +1,12 @@
 // Popup script for Webpage Marker
 
+// Listen for highlight count updates from content script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'updateHighlightCount') {
+    document.getElementById('highlightCount').textContent = `Highlights on this page: ${request.count}`;
+  }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   // Get buttons
   const toggleBtn = document.getElementById('toggleHighlights');
@@ -25,9 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.runtime.sendMessage({action: 'clearHighlights'}, (response) => {
         if (chrome.runtime.lastError) {
           console.error('Error:', chrome.runtime.lastError);
-        } else {
-          updateHighlightCount();
         }
+        // Count will be updated by message from content script
       });
     }
   });
