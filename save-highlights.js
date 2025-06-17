@@ -111,8 +111,8 @@ function injectPrintStyles() {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
-        padding: 0 2px !important;
         border-radius: 2px !important;
+        box-shadow: 2px 0 0 #ffeb3b, -2px 0 0 #ffeb3b !important;
       }
       
       /* Different highlight colors if implemented */

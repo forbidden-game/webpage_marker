@@ -3,12 +3,13 @@
 /* Default highlight style - yellow marker effect */
 .webpage-marker-highlight {
   background-color: #ffeb3b;
-  padding: 0 2px;
   border-radius: 2px;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   display: inline;
   transition: background-color 0.2s ease;
+  /* Use box-shadow instead of padding to avoid layout disruption */
+  box-shadow: 2px 0 0 #ffeb3b, -2px 0 0 #ffeb3b;
 }
 
 /* Hover effect for highlights */
@@ -73,6 +74,8 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     color-adjust: exact;
+    /* Ensure box-shadow prints correctly */
+    box-shadow: 2px 0 0 #ffeb3b, -2px 0 0 #ffeb3b !important;
   }
   
   .webpage-marker-highlight.green {

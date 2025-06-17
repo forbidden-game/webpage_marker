@@ -8,7 +8,9 @@
       "Bash(git commit:*)",
       "mcp__zen__codereview",
       "Bash(rm:*)",
-      "mcp__zen__chat"
+      "mcp__zen__chat",
+      "mcp__zen__consensus",
+      "mcp__zen__precommit"
     ],
     "deny": []
   }
