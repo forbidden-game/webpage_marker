@@ -1,11 +1,23 @@
 // Save with Highlights functionality
 // Simple, robust approach using window.print()
 
+// Helper function to count logical highlights (not individual spans)
+function countLogicalHighlights() {
+  const highlightSpans = document.querySelectorAll('.webpage-marker-highlight');
+  const uniqueHighlightIds = new Set();
+  highlightSpans.forEach(span => {
+    if (span.dataset.highlightId) {
+      uniqueHighlightIds.add(span.dataset.highlightId);
+    }
+  });
+  return uniqueHighlightIds.size;
+}
+
 // Save the current page with highlights as PDF
 function saveWithHighlights() {
   try {
-    // Count highlights for user feedback
-    const highlightCount = document.querySelectorAll('.webpage-marker-highlight').length;
+    // Count logical highlights for user feedback
+    const highlightCount = countLogicalHighlights();
     
     if (highlightCount === 0) {
       const shouldProceed = confirm('No highlights found on this page. Continue anyway?');
@@ -51,7 +63,7 @@ function createPrintHeader() {
   header.id = 'webpage-marker-print-header';
   header.className = 'webpage-marker-print-only';
   
-  const highlightCount = document.querySelectorAll('.webpage-marker-highlight').length;
+  const highlightCount = countLogicalHighlights();
   const currentDate = new Date().toLocaleDateString();
   
   header.innerHTML = `
