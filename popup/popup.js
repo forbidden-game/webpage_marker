@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleBtn = document.getElementById('toggleHighlights');
   const clearBtn = document.getElementById('clearHighlights');
   const saveBtn = document.getElementById('saveHighlights');
+  const customizeBtn = document.getElementById('customizeHotkeys');
   const highlightCount = document.getElementById('highlightCount');
   
   // Update highlight count
@@ -53,6 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     });
+  });
+  
+  // Customize hotkeys
+  customizeBtn.addEventListener('click', () => {
+    chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+    window.close();
   });
   
   // Update highlight count

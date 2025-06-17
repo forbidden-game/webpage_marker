@@ -104,3 +104,25 @@ kbd {
   font-size: 13px;
   color: #666;
 }
+
+.settings {
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #2196F3;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 0;
+}
+
+.btn-link:hover {
+  color: #1976D2;
+  text-decoration: none;
+}

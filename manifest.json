@@ -25,9 +25,21 @@
     "highlight-text": {
       "suggested_key": {
         "default": "Ctrl+H",
-        "mac": "Command+H"
+        "mac": "Command+H",
+        "chromeos": "Ctrl+H",
+        "linux": "Ctrl+H"
       },
       "description": "Highlight selected text"
+    },
+    "toggle-highlights": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H",
+        "mac": "Command+Shift+H"
+      },
+      "description": "Toggle all highlights on/off"
+    },
+    "save-highlights": {
+      "description": "Save page with highlights as PDF"
     }
   },
   
